@@ -1,2 +1,2 @@
-import { Table } from "./elements/Table";
+import { Table } from "lib/elements/Table";
 export { Table };

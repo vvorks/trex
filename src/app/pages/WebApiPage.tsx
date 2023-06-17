@@ -1,6 +1,6 @@
 import axios from "axios";
 import React from "react";
-import * as Lib from "../../lib/elements";
+import * as Lib from "lib/elements";
 
 type MemberRec = { id: number; name: string; age: number };
 

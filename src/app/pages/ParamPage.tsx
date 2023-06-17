@@ -1,6 +1,6 @@
 import React from "react";
-import * as Lib from "../../lib/elements";
-import { Logs } from "../../lib/lang/Logs";
+import * as Lib from "lib/elements";
+import { Logs } from "lib/lang/Logs";
 
 type KeyValue = { id: number; key: string; value: string };
 

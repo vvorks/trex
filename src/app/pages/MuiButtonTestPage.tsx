@@ -1,6 +1,6 @@
 import * as Mui from "@mui/material";
 import React from "react";
-import { Logs } from "../../lib/lang/Logs";
+import { Logs } from "lib/lang/Logs";
 
 type Props = {
   title: string;
