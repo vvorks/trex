@@ -1,6 +1,6 @@
 import React from "react";
-import { Table } from "../../lib/elements/Table";
-import { Logs } from "../../lib/util/Logs";
+import * as Lib from "../../lib/elements";
+import { Logs } from "../../lib/lang/Logs";
 
 type KeyValue = { id: number; key: string; value: string };
 
@@ -54,7 +54,7 @@ export class ParamPage extends React.Component<Props, State> {
     return (
       <>
         <h1>{this.props.title}</h1>
-        <Table
+        <Lib.Table
           array={this.state.rows}
           header={(e) => this.renderHeader(e)}
           body={(e) => this.renderBody(e)}

@@ -1,6 +1,6 @@
 import axios from "axios";
 import React from "react";
-import { Table } from "../../lib/elements/Table";
+import * as Lib from "../../lib/elements";
 
 type MemberRec = { id: number; name: string; age: number };
 
@@ -76,7 +76,7 @@ export class WebApiPage extends React.Component<Props, State> {
     return (
       <>
         <h1>{this.props.title}</h1>
-        <Table
+        <Lib.Table
           array={this.state.rows}
           header={this.renderHeader}
           body={this.renderBody}

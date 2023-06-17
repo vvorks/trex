@@ -1,5 +1,5 @@
 import React from "react";
-import { HasId, Render } from "../util/Types";
+import { HasId, Render } from "../lang/Types";
 
 interface TableProps<T extends HasId> {
   array: T[];

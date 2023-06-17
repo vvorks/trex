@@ -6,7 +6,7 @@ import { HomePage } from "./app/pages/HomePage";
 import { ParamPage } from "./app/pages/ParamPage";
 import { WebApiPage } from "./app/pages/WebApiPage";
 import { MuiButtnTestPage } from "./app/pages/MuiButtonTestPage";
-import { Logs } from "./lib/util/Logs";
+import { Logs } from "./lib/lang/Logs";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
