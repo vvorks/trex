@@ -1,19 +1,15 @@
+import { Values } from "lib/lang/Values";
 import React from "react";
 
 type Props = {
-  title: string;
+  title?: string;
 };
 
-export class HomePage extends React.Component<Props, any> {
-  public constructor(prop: Props) {
-    super(prop);
-  }
-
-  public render(): React.ReactNode {
-    return (
-      <div>
-        <h1>{this.props.title}</h1>
-      </div>
-    );
-  }
+export function HomePage(props: Props): React.ReactElement {
+  const title = Values.getValue(props.title, "home");
+  return (
+    <div>
+      <h1>{title}</h1>
+    </div>
+  );
 }

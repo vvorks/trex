@@ -53,20 +53,24 @@ export class KeyControler extends React.Component<
       evt.preventDefault();
       return;
     }
-    const curr = evt.target as HTMLElement;
-    const name = this.getName(curr);
+    const name = this.getName(evt.target);
     const mods = this.getKeyModifier(evt);
     const macsKey = this.getKeyCode(evt) | (mods & KeyCodes.MOD_MACS);
     Logs.info("onKeyDown(%s) key=0x%x", name, macsKey);
     if (evt.timeStamp < this.waitUntil) {
+      Logs.info("BUSY");
       evt.preventDefault();
       return;
     }
+    const curr = this.getCurrentElement(
+      evt.target,
+      KeyCodes.isArrowKey(macsKey)
+    );
+    if (!curr) {
+      return;
+    }
     const body = document.body;
-    if (curr === body) {
-      this.restoreFocus();
-      evt.preventDefault();
-    } else if (macsKey === KeyCodes.F2) {
+    if (macsKey === KeyCodes.F2) {
       if (this.isEditable(curr)) {
         this.editState = KeyControler.EDIT_STATE_FULL;
       }
@@ -105,25 +109,13 @@ export class KeyControler extends React.Component<
     }
   }
 
-  private onKeyUp(evt: KeyboardEvent): void {
-    if (!(evt.target instanceof HTMLElement)) {
-      evt.preventDefault();
-      return;
-    }
-    const curr = evt.target as HTMLElement;
-    const name = this.getName(curr);
-    const mods = this.getKeyModifier(evt);
-    const macsKey = this.getKeyCode(evt) | (mods & KeyCodes.MOD_MACS);
-    Logs.info("onKeyUp  (%s) key=0x%x", name, macsKey);
-  }
+  private onKeyUp(evt: KeyboardEvent): void {}
 
   private onFocus(evt: FocusEvent): void {
     if (!(evt.target instanceof HTMLElement)) {
       return;
     }
     const curr = evt.target;
-    const name = this.getName(curr);
-    Logs.info("onFocus %s", name);
     this.lastFocus = curr;
     if (curr instanceof HTMLInputElement) {
       curr.select();
@@ -142,9 +134,6 @@ export class KeyControler extends React.Component<
     if (!(evt.target instanceof HTMLElement)) {
       return;
     }
-    const target = evt.target;
-    const name = this.getName(target);
-    Logs.info("onBlur %s", name);
     this.editState = KeyControler.EDIT_STATE_NONE;
     this.saveText = "";
   }
@@ -166,6 +155,20 @@ export class KeyControler extends React.Component<
   private getName(e: HTMLElement): string {
     const dataName = e.getAttribute("data-name");
     return dataName !== null ? dataName : e.tagName;
+  }
+
+  private getCurrentElement(target: HTMLElement, doRestore: boolean) {
+    if (target !== document.body) {
+      return target;
+    } else if (!doRestore) {
+      this.lastFocus = undefined;
+      return undefined;
+    } else if (!!this.lastFocus && this.isShown(this.lastFocus)) {
+      this.lastFocus.focus();
+      return this.lastFocus;
+    } else {
+      return this.resetFocus();
+    }
   }
 
   private getNextElement(
@@ -219,24 +222,17 @@ export class KeyControler extends React.Component<
     return next;
   }
 
-  private resetFocus() {
+  private resetFocus(): HTMLElement | undefined {
     const root = document.body;
     for (const child of this.getDescendants(root, (e) => this.isFocusable(e))) {
       this.setFocus(child);
-      break;
+      return child;
     }
+    return undefined;
   }
 
   private setFocus(e: HTMLElement) {
     e.focus();
-  }
-
-  private restoreFocus(): void {
-    if (!!this.lastFocus && this.isShown(this.lastFocus)) {
-      this.lastFocus.focus();
-    } else {
-      this.resetFocus();
-    }
   }
 
   private isShown(e: HTMLElement): boolean {
@@ -248,7 +244,8 @@ export class KeyControler extends React.Component<
     elem: HTMLElement,
     func: Predicate<HTMLElement>
   ): IterableIterator<HTMLElement> {
-    if (func(elem)) {
+    const hit = func(elem);
+    if (hit) {
       yield elem;
     }
     for (const c of elem.children) {

@@ -1,58 +1,30 @@
 import axios from "axios";
 import React from "react";
 import * as Lib from "lib/elements";
+import { Values } from "lib/lang/Values";
 
 type MemberRec = { id: number; name: string; age: number };
 
 type Props = {
-  title: string;
+  title?: string;
 };
 
 type State = {
   rows: MemberRec[];
 };
 
-export class WebApiPage extends React.Component<Props, State> {
-  private _mounted: boolean;
-  private _loadedState?: State;
+export function WebApiPage(props: Props): React.ReactElement {
+  const title = Values.getValue(props.title, "webapi");
+  const [state, setState] = React.useState<State>({ rows: [] });
 
-  public constructor(props: Props) {
-    super(props);
-    this.state = {
-      rows: [],
-    };
-    this._mounted = false;
+  React.useEffect(() => {
     axios.get("http://localhost:3100/member").then((resp) => {
       const rows = resp.data as MemberRec[];
-      this.updateState({ rows: rows });
+      setState({ rows: rows });
     });
-  }
+  }, []);
 
-  public componentDidMount(): void {
-    this._mounted = true;
-    this.flushState();
-  }
-
-  public componentWillUnmount(): void {
-    this._mounted = false;
-  }
-
-  private updateState(state: State): void {
-    if (this._mounted) {
-      this.setState(state);
-    } else {
-      this._loadedState = state;
-    }
-  }
-
-  private flushState(): void {
-    if (!!this._loadedState) {
-      this.setState(this._loadedState);
-      this._loadedState = undefined;
-    }
-  }
-
-  private renderHeader(e: MemberRec): React.ReactNode {
+  function renderHeader(e: MemberRec): React.ReactElement {
     return (
       <>
         <th>id</th>
@@ -62,7 +34,7 @@ export class WebApiPage extends React.Component<Props, State> {
     );
   }
 
-  private renderBody(e: MemberRec): React.ReactNode {
+  function renderBody(e: MemberRec): React.ReactElement {
     return (
       <>
         <td>{e.id}</td>
@@ -72,16 +44,14 @@ export class WebApiPage extends React.Component<Props, State> {
     );
   }
 
-  public render(): React.ReactNode {
-    return (
-      <>
-        <h1>{this.props.title}</h1>
-        <Lib.Table
-          array={this.state.rows}
-          header={(e) => this.renderHeader(e)}
-          body={(e) => this.renderBody(e)}
-        />
-      </>
-    );
-  }
+  return (
+    <>
+      <h1>{title}</h1>
+      <Lib.Table
+        array={state.rows}
+        header={(e) => renderHeader(e)}
+        body={(e) => renderBody(e)}
+      />
+    </>
+  );
 }

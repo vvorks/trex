@@ -2,35 +2,27 @@ import * as Mui from "@mui/material";
 import * as Lib from "lib/elements";
 import React from "react";
 import { Logs } from "lib/lang/Logs";
+import { Values } from "lib/lang/Values";
 
 type Props = {
-  title: string;
+  title?: string;
 };
 
-type State = {
-  value: number;
-};
+export function GridPage(props: Props): React.ReactElement {
+  const title = Values.getValue(props.title, "button");
 
-export class MuiButtnTestPage extends React.Component<Props, State> {
-  public constructor(prop: Props) {
-    super(prop);
-    this.state = {
-      value: 0,
-    };
-  }
-
-  private onClick(arg0: string): void {
+  function onClick(arg0: string): void {
     Logs.debug("onClick %s", arg0);
   }
 
-  private renderRow(i: number): React.ReactNode {
+  function renderRow(i: number): React.ReactElement {
     return (
       <Mui.Grid key={i} container spacing={2}>
         <Mui.Grid item xs={2}>
           <Mui.Button
             sx={{ width: "100%" }}
             data-name="text"
-            onClick={() => this.onClick("text" + i)}
+            onClick={() => onClick("text" + i)}
           >
             text({i})
           </Mui.Button>
@@ -39,7 +31,7 @@ export class MuiButtnTestPage extends React.Component<Props, State> {
           <Mui.Button
             sx={{ width: "100%" }}
             data-name="cont"
-            onClick={() => this.onClick("cont" + i)}
+            onClick={() => onClick("cont" + i)}
             variant="contained"
           >
             contained({i})
@@ -49,7 +41,7 @@ export class MuiButtnTestPage extends React.Component<Props, State> {
           <Mui.Button
             sx={{ width: "100%" }}
             data-name="outl"
-            onClick={() => this.onClick("outl" + i)}
+            onClick={() => onClick("outl" + i)}
             variant="outlined"
           >
             outlined({i})
@@ -69,16 +61,14 @@ export class MuiButtnTestPage extends React.Component<Props, State> {
     );
   }
 
-  public render(): React.ReactNode {
-    const ids = [];
-    for (let i = 0; i < 100; i++) {
-      ids.push(i);
-    }
-    return (
-      <>
-        <h1>{this.props.title}</h1>
-        {ids.map((i) => this.renderRow(i))}
-      </>
-    );
+  const ids = [];
+  for (let i = 0; i < 100; i++) {
+    ids.push(i);
   }
+  return (
+    <>
+      <h1>{title}</h1>
+      {ids.map((i) => renderRow(i))}
+    </>
+  );
 }
