@@ -78,8 +78,8 @@ export class WebApiPage extends React.Component<Props, State> {
         <h1>{this.props.title}</h1>
         <Lib.Table
           array={this.state.rows}
-          header={this.renderHeader}
-          body={this.renderBody}
+          header={(e) => this.renderHeader(e)}
+          body={(e) => this.renderBody(e)}
         />
       </>
     );
